@@ -1,0 +1,3 @@
+Run this script while in the scorpion pit near the duel arena.
+it will fight scorpions until you stop it.
+It will not stop or run away if youre almost dead.
