@@ -154,27 +154,7 @@ def moveMouse(hwnd, x, y, s, window_num=0):  #TODO: add angle param to allow cus
         del line[::2]
         del line[::2]
         
-    ctr = 0
-    for i in line:
-        ctr+=1
-        
-    s1 = ctr / 3
-    s1 = int(s1)
-    ctr = ctr - s1
-    
-    s2 = s1 + s1
-    
-    s3 = s2 + s1
-    
-    lines = []
-    tmp = line[0:s1]
-    lines.append(tmp)
-    
-    tmp = line[s1:s2]
-    lines.append(tmp)
-    
-    tmp = line[s2:s3]
-    lines.append(tmp)
+    lines = np.array_split(line, 3)
     
     vert = random.randint(1,2)
 
@@ -184,7 +164,7 @@ def moveMouse(hwnd, x, y, s, window_num=0):  #TODO: add angle param to allow cus
         y = point[1]
         y = y + ctr
         
-        p = [x, y]
+        p = [round(x), round(y)]
         win32api.SetCursorPos(p)
         
         if vert == 1:
@@ -198,7 +178,7 @@ def moveMouse(hwnd, x, y, s, window_num=0):  #TODO: add angle param to allow cus
         x, y = point
         y = y + ctr
         
-        p = [x, y]
+        p = [round(x), round(y)]
         win32api.SetCursorPos(p)
         time.sleep(t)
         
@@ -207,7 +187,7 @@ def moveMouse(hwnd, x, y, s, window_num=0):  #TODO: add angle param to allow cus
         y = point[1]
         y = y + ctr
         
-        p = [x, y]
+        p = [round(x), round(y)]
         win32api.SetCursorPos(p)
         
         if vert == 1:
@@ -218,11 +198,12 @@ def moveMouse(hwnd, x, y, s, window_num=0):  #TODO: add angle param to allow cus
         time.sleep(t)
       
 def getLine(x1, y1, x2, y2):
-    rise = int((y2 - y1))
-    run = int((x2 - x1))
+    rise = (y2 - y1)
+    run = (x2 - x1)
     try:
         m = rise / run
     except ZeroDivisionError:
+        print("Divide by zero error")
         return None
         
     f = m * x1
@@ -243,29 +224,36 @@ def getLine(x1, y1, x2, y2):
     
     print("rise {}, run {}, m {}, f {}, b {}, x {},  y {}, y_dif {}, x_dif {}".format(rise, run, m, f, b, x, y, y_dif, x_dif))
     
+    x2 = round(x2)
+    y2 = round(y2)
+    
     if x_dif > y_dif:
         if x < x2:
             while x != x2 and y != y2:
                 x += 1
                 y = m * x + b
-                line.append([x, round(y)])
+                #print("({}, {})".format(x,y))
+                line.append([x, y])
         else:
             while x != x2 and y != y2:
                 x -= 1
                 y = m * x + b
-                line.append([x, round(y)])
+                #print("({}, {})".format(x,y))
+                line.append([x, y])
     
     else:
         if y < y2:
             while x != x2 and y != y2:
                 y += 1
                 x = y / m - b / m
-                line.append([round(x), y])
+                #print("({}, {})".format(x,y))
+                line.append([x, y])
         else:
             while x != x2 and y != y2:
                 y -= 1
                 x = y / m - b / m
-                line.append([round(x), y])
+                #print("({}, {})".format(x,y))
+                line.append([x, y])
             
     return line
       
