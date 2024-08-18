@@ -3,31 +3,32 @@ import random
 import numpy as np
 import cv2 as cv
 import sys
-import pytweening as pyt
 from datetime import datetime
 import time
 import ctypes
-import pyautogui as pya
 
 ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
 #Prints all open window names, helpful when looking for true window name
-def winEnumHandler(window_name, extra):
+def winEnumHandler(window_name, w_list):
     if win32gui.IsWindowVisible(window_name):
-        win_list.append(win32gui.GetWindowText(window_name))
-    
-#Calls EnumWindows 
-def printWindows():
-    win32gui.EnumWindows(winEnumHandler, None)
+        str_w = win32gui.GetWindowText(window_name)
+        if str_w != '':    
+            w_list.append("{}".format(str_w))
+
+#Calls EnumWindows
+def getWindows():  
+    win_list = []    
+    win32gui.EnumWindows(winEnumHandler, win_list)
+    return win_list
     
 #Sets target window (hwnd)
 #Parameters:
     #window_name: cell name of target window
         #may have to enum windows to find correct name
 def getHwnd(window_names):
-    global hwnd
     hwnd = []
-    print("!!!!\n",window_names)
+    print("Found - ",window_names)
     for window_name in window_names:
         window = win32gui.FindWindow(None, window_name)
         
@@ -36,9 +37,11 @@ def getHwnd(window_names):
             sys.exit()
             
         hwnd.append(window)
+    
+    return hwnd
 
 #Forces target window (hwnd) to foreground
-def activateWindow(window_num=0):
+def activateWindow(hwnd, window_num=0):
     user32 = ctypes.windll.user32
     user32.SetForegroundWindow(hwnd[window_num])
     if user32.IsIconic(hwnd[window_num]):
@@ -46,7 +49,8 @@ def activateWindow(window_num=0):
 
 #Gets top left and bottom right coordinate of the target window
 #for precise image capture and click mapping
-def getWindow(window_num=0):
+def getWindow(hwnd, window_num=0):
+    print(window_num, hwnd)
     hwnd_cur = hwnd[window_num]
     rect = win32gui.GetWindowRect(hwnd_cur)
     x = rect[0]
@@ -129,29 +133,52 @@ def sleep(low, high):
 #Parameters:
     #Takes x, y coordinates of point to move cursor to
     #s for speed, set to True for faster cursor movement
-def moveMouse(x, y, s, window_num=0):  #TODO: add angle param to allow custom set arc heights
+def moveMouse(hwnd, x, y, s, window_num=0):  #TODO: add angle param to allow custom set arc heights
     offset_x = 8
     offset_y = 45
     
-    x1, y1, x2, y2 = getWindow(window_num)
+    x1, y1, x2, y2 = getWindow(hwnd, window_num)
     
     x1 += offset_x
     y1 += offset_y 
         
     pos = win32api.GetCursorPos()
     orig_dest = [x, y]
-    line = pyt.getLine(pos[0], pos[1], x+x1, y+y1)
+    line = getLine(pos[0], pos[1], x+x1, y+y1)
+    if line == None:
+        print("Tried dividing by zero, maybe the new match is on same exact coorinates as the cursor")
+        return False
     
     t = 0.0001
     if s:
         del line[::2]
         del line[::2]
         
-    lines = np.array_split(line, 3)
+    ctr = 0
+    for i in line:
+        ctr+=1
+        
+    s1 = ctr / 3
+    s1 = int(s1)
+    ctr = ctr - s1
+    
+    s2 = s1 + s1
+    
+    s3 = s2 + s1
+    
+    lines = []
+    tmp = line[0:s1]
+    lines.append(tmp)
+    
+    tmp = line[s1:s2]
+    lines.append(tmp)
+    
+    tmp = line[s2:s3]
+    lines.append(tmp)
+    
     vert = random.randint(1,2)
 
     ctr = 0
-    print("Moving Mouse")
     for point in lines[0]:
         x = point[0]
         y = point[1]
@@ -189,10 +216,62 @@ def moveMouse(x, y, s, window_num=0):  #TODO: add angle param to allow custom se
             ctr += 1
             
         time.sleep(t)
+      
+def getLine(x1, y1, x2, y2):
+    rise = int((y2 - y1))
+    run = int((x2 - x1))
+    try:
+        m = rise / run
+    except ZeroDivisionError:
+        return None
         
+    f = m * x1
+    
+    b = y1 - f
+    
+    line = []
+    x = x1
+    y = y1
+    
+    y_dif = y2 - y1
+    if y_dif < 0:
+        y_dif = y_dif * -1
+        
+    x_dif = x2 - x1
+    if x_dif < 0:
+        x_dif = x_dif * -1
+    
+    print("rise {}, run {}, m {}, f {}, b {}, x {},  y {}, y_dif {}, x_dif {}".format(rise, run, m, f, b, x, y, y_dif, x_dif))
+    
+    if x_dif > y_dif:
+        if x < x2:
+            while x != x2 and y != y2:
+                x += 1
+                y = m * x + b
+                line.append([x, round(y)])
+        else:
+            while x != x2 and y != y2:
+                x -= 1
+                y = m * x + b
+                line.append([x, round(y)])
+    
+    else:
+        if y < y2:
+            while x != x2 and y != y2:
+                y += 1
+                x = y / m - b / m
+                line.append([round(x), y])
+        else:
+            while x != x2 and y != y2:
+                y -= 1
+                x = y / m - b / m
+                line.append([round(x), y])
+            
+    return line
+      
 #Get screenshot of current window
-def getScreenshot(hsv, window_num=0):
-    x, y, x2, y2 = getWindow(window_num)
+def getScreenshot(hwnd, hsv, window_num=0):
+    x, y, x2, y2 = getWindow(hwnd, window_num)
     
     W = x2 - x - 5
     H = y2 - y - 5
@@ -217,6 +296,7 @@ def getScreenshot(hsv, window_num=0):
     #convert to opencv compatible image type
     signedIntsArray = dataBitMap.GetBitmapBits(True)
     img = np.fromstring(signedIntsArray, dtype='uint8')
+    
     img.shape = (H, W, 4)
 
     #Free Resources
@@ -240,6 +320,7 @@ def getScreenshot(hsv, window_num=0):
 #Applies an hsv filter to the image before searching for your target 
 #Pass filter into find function
 #FORMAT:   
+    # 0 - Hue min, 1 - Saturation min, 2 - Value min, 3 - Hue max, 4 - Sat max, 5 - Val max, 6 - Sat add, 7 - Sat sub, 8 - Val add, 9 - Val sub
                   #0   1  2   3   4    5   6  7  8  9
     #hsv_filter = [9, 99, 0, 15, 255, 255, 0, 0, 0, 0]
 def applyHsvFilter(original_img, hsv_filter):
@@ -279,13 +360,13 @@ def shift_channel(c, amount):
 #Searches for image on screen
 #Parameters:
     #WALDO: image file to search for on screen
-def find(WALDO, window_num=0, hsv=None):
-    img = getScreenshot(hsv, window_num)
+def find(target, hwnd, window_num=0, hsv=None):
+    img = getScreenshot(hwnd, hsv, window_num)
 
     #cv.imshow("test" ,img)
     #cv.waitKey(0)
 
-    res = cv.matchTemplate(img, WALDO, cv.TM_CCOEFF_NORMED)
+    res = cv.matchTemplate(img, target, cv.TM_CCOEFF_NORMED)
     
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
     
