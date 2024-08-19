@@ -31,7 +31,7 @@ def main():
                 max_val, max_loc = pb.find(HEALTHBAR, HWND, window_num)
                 if max_val >= 0.8:  #Try changing this if youre geting too many false positive or not enough matches. 
                                     #it goes from 0 to 1. 0: match everything. 1: match only exact matches to the photo
-                    print("Fighting... changing window.") 
+                    print("Fighting...") 
                     pb.sleep(1,2)
                 else:
                     max_val, max_loc = pb.find(SCORPION, HWND, window_num, scorpion_hsv)
