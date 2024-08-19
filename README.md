@@ -15,7 +15,7 @@ pip install pywin32 numpy opencv-python
 # Usage
 just import it into your script.
 
--------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
 **HSV Filter Format**  
 ```
 FORMAT:   
@@ -24,6 +24,7 @@ FORMAT:
 hsv_filter_example = [9, 99, 0, 15, 255, 255, 0, 0, 0, 0]
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **getScreenshot(hwnd_list, hsv, instance_num=0):**  
 &emsp;&emsp;-hwnd_list: List of window handles  
 &emsp;&emsp;-hsv: List of HSV filter values  
@@ -41,6 +42,7 @@ res = cv.matchTemplate(img, target, cv.TM_CCOEFF_NORMED)
 min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **find(target, hwnd_list, instance_num=0, hsv=None):**  
 &emsp;&emsp;-target: Path to image target image file  
 &emsp;&emsp;-hwnd_list: List of window handles  
@@ -56,6 +58,7 @@ if max_val >= 0.8:  #Confidence value. Try changing this if youre geting too man
   ...               #it goes from 0 to 1. 0: match everything. 1: match only exact matches to the photo
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **getWindows():**  
 &emsp;-Returns a list of true open window names.
 
@@ -70,6 +73,7 @@ for win in windows:
         win_ctr += 1
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **getHwnd(window_names):**  
 &emsp;&emsp;-window_names: Type: List. Cell name/names of target window. you may have to getWindows() to find correct name.  
 
@@ -80,6 +84,7 @@ Example:
 HWND_LIST = pybot.getHwnd(instance_list)
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **activateWindow(hwnd_list, instance_num=0):**  
 &emsp;&emsp;-hwnd_list: List of target window handles.  
 &emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
@@ -88,9 +93,10 @@ HWND_LIST = pybot.getHwnd(instance_list)
 
 Example:
 ```python
-pybot.activateWindow(HWND, window_num)
+pybot.activateWindow(hwnd_list, instance_num)
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **getWindowPos(hwnd_list, instance_num=0):**  
 &emsp;&emsp;-hwnd_list: List of target window handles.  
 &emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
@@ -99,9 +105,10 @@ pybot.activateWindow(HWND, window_num)
 
 Example:  
 ```python
-topLeftX, topLeftY, bottomRightX, bottomRightY = getWindowPos(hwnd, window_num)
+topLeftX, topLeftY, bottomRightX, bottomRightY = pybot.getWindowPos(hwnd_list, instance_num)
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **moveMouse(hwnd_list, x, y, s, instance_num=0):**  
 &emsp;&emsp;-hwnd_list: List of window handles  
 &emsp;&emsp;-x, y: coordinates to move cursor to  
@@ -112,12 +119,13 @@ topLeftX, topLeftY, bottomRightX, bottomRightY = getWindowPos(hwnd, window_num)
 
 Example:
 ```python
-e = pb.moveMouse(HWND, w, h, True, window_num)
+e = pybot.moveMouse(hwnd_list, w, h, True, instance_num)
 if e == 1:  #Error occurred calculating points on line
     e = 0
     continue
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **getCenter(loc, FILE):**  
 &emsp;&emsp;-loc: Top left coordinates of detected match  
 &emsp;&emsp;-FILE: image file loaded by open-cv2  
@@ -139,6 +147,7 @@ if max_val >= 0.5:
         return 1
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **randNum(low, high):**  
 &emsp;&emsp;-low: float for lowest possible value to generate.  
 &emsp;&emsp;-high: float for highest possible value to generate.  
@@ -149,12 +158,15 @@ if max_val >= 0.5:
 time.sleep(randNum(0.05,0.1))
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **rightClick():**  
 &emsp;-Presses the right mouse button  
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **click():**  
 &emsp;-Presses the left mouse button  
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **clickHold(hwnd_list, x, y, s=False, instance_num=0):**  
 &emsp;&emsp;-hwnd_list: List of window handles  
 &emsp;&emsp;-x: Destination x  
@@ -164,15 +176,19 @@ time.sleep(randNum(0.05,0.1))
 
 &emsp;-Presses the left mouse button and drags the cursor to x, y
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **mouseScrollUp():**  
 &emsp;-Scrolls the mouse wheel up  
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **mouseScrollDown():**  
 &emsp;-Scrolls the mouse wheel down  
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **sleep(low, high):**  
 &emsp;-Sleep for a random amount of time between floats low and high inclusive  
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **getLine(x1, y1, x2, y2):**  
 &emsp;&emsp;-x1: Current x  
 &emsp;&emsp;-y1: Current y  
@@ -181,6 +197,7 @@ time.sleep(randNum(0.05,0.1))
 
 &emsp;-Returns list of all coordinates of a line between two points.  
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **applyHsvFilter(original_img, hsv_filter):**  
 &emsp;&emsp;-original_img: contiguous array of a bitmap  
 &emsp;&emsp;-hsv_filter: HSV values list  
@@ -194,6 +211,7 @@ scorpion_hsv = [0, 0, 0, 0, 255, 65, 0, 0, 25, 0]
 altered_img = applyHsvFilter(img, scorpion_hsv):
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------
 **printMatch(loc, conf):**  
 &emsp;&emsp;-loc: Coordinates of match found on screen  
 &emsp;&emsp;-conf: Confidence of match found on screen  
