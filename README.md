@@ -1,6 +1,6 @@
 # Pybot
 Useful functions for making bots scripts for simple games like runescape or flash games, using OpenCV Template Matching.  
-Support multiple instances at the same time.  
+Support multiple instances at the same time and HSV filters for more refined image detection.  
 Supports windows only.  
 
 # Dependencies
@@ -16,6 +16,45 @@ pip install pywin32 numpy opencv-python
 just import it into your script.
 
 -------------------------------------------------------------------------------------------------------------------------
+**HSV Filter Format**  
+```
+FORMAT:   
+0 - Hue min, 1 - Saturation min, 2 - Value min, 3 - Hue max, 4 - Sat max, 5 - Val max, 6 - Sat add, 7 - Sat sub, 8 - Val add, 9 - Val sub
+                      0   1  2   3   4    5   6  7  8  9
+hsv_filter_example = [9, 99, 0, 15, 255, 255, 0, 0, 0, 0]
+```
+
+**getScreenshot(hwnd_list, hsv, instance_num=0):**  
+&emsp;&emsp;-hwnd_list: List of window handles  
+&emsp;&emsp;-hsv: List of HSV filter values  
+&emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
+
+&emsp;-Returns image bitmap as contiguous array  
+
+Example:
+```python
+img = getScreenshot(hwnd_list, hsv, instance_num)
+
+target = "locate_me.png"
+res = cv.matchTemplate(img, target, cv.TM_CCOEFF_NORMED)
+
+min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+```
+
+**find(target, hwnd_list, instance_num=0, hsv=None):**  
+&emsp;&emsp;-target: Path to image target image file  
+&emsp;&emsp;-hwnd_list: List of window handles  
+&emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
+&emsp;&emsp;-hsv: List of HSV filter values  
+
+Example:
+```python
+pybot.activateWindow(hwnd_list, instance_num)
+
+max_val, max_loc = pybot.find(HEALTHBAR, hwnd_list, instance_num)
+if max_val >= 0.8:  #Confidence value. Try changing this if youre geting too many false positive or not enough matches. 
+  ...               #it goes from 0 to 1. 0: match everything. 1: match only exact matches to the photo
+```
 
 **getWindows():**  
 &emsp;-Returns a list of true open window names.
@@ -52,14 +91,109 @@ Example:
 pybot.activateWindow(HWND, window_num)
 ```
 
-**getWindowPos(hwnd_list, instance_num=0):**
+**getWindowPos(hwnd_list, instance_num=0):**  
 &emsp;&emsp;-hwnd_list: List of target window handles.  
 &emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
 
-&emsp;-Returns top left and bottom right coordinates of the target window for precise image capture and click mapping
+&emsp;-Returns top left and bottom right coordinates of the target window for precise image capture and click mapping.  
 
 Example:  
 ```python
 topLeftX, topLeftY, bottomRightX, bottomRightY = getWindowPos(hwnd, window_num)
 ```
 
+**moveMouse(hwnd_list, x, y, s, instance_num=0):**  
+&emsp;&emsp;-hwnd_list: List of window handles  
+&emsp;&emsp;-x, y: coordinates to move cursor to  
+&emsp;&emsp;-s: speed, set to True for faster cursor movement  
+&emsp;&emsp;instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
+
+&emsp-Gets all integer coordinates from the current cursor position to the destination and moves the mouse along the line. Applies an upward or downward slope.  
+
+Example:
+```python
+e = pb.moveMouse(HWND, w, h, True, window_num)
+if e == 1:  #Error occurred calculating points on line
+    e = 0
+    continue
+```
+
+**getCenter(loc, FILE):**  
+&emsp;&emsp;-loc: Top left coordinates of detected match  
+&emsp;&emsp;-FILE: image file loaded by open-cv2  
+
+&emsp;-returns coordinates of the center of an image loaded by open-cv2
+
+Example:
+```python
+SCORPION = cv.imread("scorpion.png")
+scorpion_hsv = [0, 0, 0, 0, 255, 65, 0, 0, 25, 0]
+
+max_val, max_loc = pybot.find(SCORPION, hwnd_list, instance_num, scorpion_hsv)
+
+if max_val >= 0.5:
+    x, y = pybot.getCenter(max_loc, SCORPION)
+    e = pybot.moveMouse(hwnd_list, x, y, True, instance_num)
+    if e == 1:  #Error Occurred
+        e = 0
+        return 1
+```
+
+**randNum(low, high):**  
+&emsp;&emsp;-low: float for lowest possible value to generate.  
+&emsp;&emsp;-high: float for highest possible value to generate.  
+
+&emsp;-Returns random float between low and high inclusive.  
+
+```python
+time.sleep(randNum(0.05,0.1))
+```
+
+**rightClick():**  
+&emsp;-Presses the right mouse button  
+
+**click():**  
+&emsp;-Presses the left mouse button  
+
+**clickHold(hwnd_list, x, y, s=False, instance_num=0):**  
+&emsp;&emsp;-hwnd_list: List of window handles  
+&emsp;&emsp;-x: Destination x  
+&emsp;&emsp;-y: Destination y  
+&emsp;&emsp;-s: Speed, False=normal, True=fast  
+&emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
+
+&emsp;-Presses the left mouse button and drags the cursor to x, y
+
+**mouseScrollUp():**  
+&emsp;-Scrolls the mouse wheel up  
+
+**mouseScrollDown():**  
+&emsp;-Scrolls the mouse wheel down  
+
+**sleep(low, high):**  
+&emsp;-Sleep for a random amount of time between floats low and high inclusive  
+
+**getLine(x1, y1, x2, y2):**  
+&emsp;&emsp;-x1: Current x  
+&emsp;&emsp;-y1: Current y  
+&emsp;&emsp;-x2: Destination x  
+&emsp;&emsp;-y2: Destination y  
+
+&emsp;-Returns list of all coordinates of a line between two points.  
+
+**applyHsvFilter(original_img, hsv_filter):**  
+&emsp;&emsp;-original_img: contiguous array of a bitmap  
+&emsp;&emsp;-hsv_filter: HSV values list  
+
+&emsp;-Returns altered image  
+
+Example:
+```python
+scorpion_hsv = [0, 0, 0, 0, 255, 65, 0, 0, 25, 0]
+
+altered_img = applyHsvFilter(img, scorpion_hsv):
+```
+
+**printMatch(loc, conf):**  
+&emsp;&emsp;-loc: Coordinates of match found on screen  
+&emsp;&emsp;-conf: Confidence of match found on screen  
