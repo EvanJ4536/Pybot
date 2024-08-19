@@ -30,6 +30,7 @@ for win in windows:
         instance_list.append(win)
         win_ctr += 1
 ```
+
 **getHwnd(window_names):**  
 &emsp;&emsp;-window_names: Type: List. Cell name/names of target window. you may have to getWindows() to find correct name.  
 
@@ -39,6 +40,7 @@ Example:
 ```python
 HWND_LIST = pybot.getHwnd(instance_list)
 ```
+
 **activateWindow(hwnd_list, instance_num=0):**  
 &emsp;&emsp;-hwnd_list: List of target window handles.  
 &emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
@@ -49,3 +51,15 @@ Example:
 ```python
 pybot.activateWindow(HWND, window_num)
 ```
+
+**getWindowPos(hwnd_list, instance_num=0):**
+&emsp;&emsp;-hwnd_list: List of target window handles.  
+&emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
+
+&emsp;-Returns top left and bottom right coordinates of the target window for precise image capture and click mapping
+
+Example:  
+```python
+topLeftX, topLeftY, bottomRightX, bottomRightY = getWindowPos(hwnd, window_num)
+```
+
