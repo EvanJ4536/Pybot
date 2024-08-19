@@ -1,6 +1,6 @@
 # Pybot
 Useful functions for making bots scripts for simple games like runescape or flash games, using OpenCV Template Matching.  
-Support multiple instances at the same time and HSV filters for more refined image detection.  
+Supports multiple instances at the same time and HSV filters for more refined image detection.  
 Supports windows only.  
 
 # Dependencies
