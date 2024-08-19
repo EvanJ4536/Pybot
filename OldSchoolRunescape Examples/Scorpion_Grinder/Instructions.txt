@@ -1,3 +1,6 @@
+These scripts are sometimes hard to stop because they move your mouse and use your keyboard.
+A simple CTRL + C while Powershell or CMD is the active window will stop it.
+
 Run this script while in the scorpion pit near the duel arena.
 it will fight scorpions until you stop it.
-It will not stop or run away if youre almost dead.
+It will NOT stop or run away if youre almost dead.
