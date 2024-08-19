@@ -16,15 +16,6 @@ pip install pywin32 numpy opencv-python
 just import it into your script.
 
 -----------------------------------------------------------------------------------------------------------------------------------------
-**HSV Filter Format**  
-```
-FORMAT:   
-0 - Hue min, 1 - Saturation min, 2 - Value min, 3 - Hue max, 4 - Sat max, 5 - Val max, 6 - Sat add, 7 - Sat sub, 8 - Val add, 9 - Val sub
-                      0   1  2   3   4    5   6  7  8  9
-hsv_filter_example = [9, 99, 0, 15, 255, 255, 0, 0, 0, 0]
-```
-
------------------------------------------------------------------------------------------------------------------------------------------
 **getScreenshot(hwnd_list, hsv, instance_num=0):**  
 &emsp;&emsp;-hwnd_list: List of window handles  
 &emsp;&emsp;-hsv: List of HSV filter values  
@@ -215,3 +206,14 @@ altered_img = applyHsvFilter(img, scorpion_hsv):
 **printMatch(loc, conf):**  
 &emsp;&emsp;-loc: Coordinates of match found on screen  
 &emsp;&emsp;-conf: Confidence of match found on screen  
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+**HSV Filter Format**  
+```
+FORMAT:   
+0 - Hue min, 1 - Saturation min, 2 - Value min, 3 - Hue max, 4 - Sat max, 5 - Val max, 6 - Sat add, 7 - Sat sub, 8 - Val add, 9 - Val sub
+                      0   1  2   3   4    5   6  7  8  9
+hsv_filter_example = [9, 99, 0, 15, 255, 255, 0, 0, 0, 0]
+```
+
