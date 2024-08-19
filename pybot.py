@@ -16,13 +16,12 @@ def winEnumHandler(window_name, w_list):
         if str_w != '':    
             w_list.append("{}".format(str_w))
 
-#Calls EnumWindows
+#Calls winEnumHandler
 def getWindows():  
     win_list = []    
     win32gui.EnumWindows(winEnumHandler, win_list)
     return win_list
     
-#Sets target window (hwnd)
 #Parameters:
     #window_name: cell name of target window
         #may have to enum windows to find correct name
@@ -41,17 +40,16 @@ def getHwnd(window_names):
     return hwnd
 
 #Forces target window (hwnd) to foreground
-def activateWindow(hwnd, window_num=0):
+def activateWindow(hwnd_list, instance_num=0):
     user32 = ctypes.windll.user32
-    user32.SetForegroundWindow(hwnd[window_num])
-    if user32.IsIconic(hwnd[window_num]):
-        user32.ShowWindow(hwnd[window_num], 9)
+    user32.SetForegroundWindow(hwnd_list[instance_num])
+    if user32.IsIconic(hwnd_list[instance_num]):
+        user32.ShowWindow(hwnd_list[instance_num], 9)
 
 #Gets top left and bottom right coordinate of the target window
 #for precise image capture and click mapping
-def getWindow(hwnd, window_num=0):
-    print(window_num, hwnd)
-    hwnd_cur = hwnd[window_num]
+def getWindowPos(hwnd_list, instance_num=0):
+    hwnd_cur = hwnd_list[instance_num]
     rect = win32gui.GetWindowRect(hwnd_cur)
     x = rect[0]
     y = rect[1]
@@ -95,49 +93,45 @@ def rightClick():
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,0,0)
     time.sleep(randNum(0.05,0.1))
     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,0,0)
-    print("Right Click")
     
 
 def click():
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0)
     time.sleep(randNum(0.05,0.1))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0,0)
-    print("Click")
     
-def clickHold(x, y, s):
+def clickHold(hwnd, x, y, s=False, instance_num=0):
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0)
-    print("Click Hold")
-    moveMouse(x, y, s)
+    #print("Click Hold")
+    moveMouse(hwnd, x, y, s, instance_num)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0,0)
-    print("Click Release")
+    #print("Click Release")
 
 #TODO: pass parameter for scroll amount
 #Scroll up
 def mouseScrollUp():
-    print("Mouse Wheel Up")
     win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, 500)
 
 #scroll down
 def mouseScrollDown():
-    print("Mouse Wheel Down")
     win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, -500)
 
 
 #sleep for a random amount of time between floats low and high inclusive
 def sleep(low, high):
     r_num = randNum(low, high)
-    print("Sleeping For {}".format(round(r_num, 2)))
+    #print("Sleeping For {}".format(round(r_num, 2)))
     time.sleep(r_num)
 
 #Moves mouse with upwards or downwards arc
 #Parameters:
     #Takes x, y coordinates of point to move cursor to
     #s for speed, set to True for faster cursor movement
-def moveMouse(hwnd, x, y, s, window_num=0):  #TODO: add angle param to allow custom set arc heights
+def moveMouse(hwnd_list, x, y, s, instance_num=0):  #TODO: add angle param to allow custom set arc heights
     offset_x = 8
     offset_y = 45
     
-    x1, y1, x2, y2 = getWindow(hwnd, window_num)
+    x1, y1, x2, y2 = getWindowPos(hwnd_list, instance_num)
     
     x1 += offset_x
     y1 += offset_y 
@@ -146,7 +140,7 @@ def moveMouse(hwnd, x, y, s, window_num=0):  #TODO: add angle param to allow cus
     orig_dest = [x, y]
     line = getLine(pos[0], pos[1], x+x1, y+y1)
     if line == None:
-        print("Tried dividing by zero, maybe the new match is on same exact coorinates as the cursor")
+        #print("Tried dividing by zero, maybe the new match is on same exact coorinates as the cursor")
         return False
     
     t = 0.0001
@@ -203,7 +197,7 @@ def getLine(x1, y1, x2, y2):
     try:
         m = rise / run
     except ZeroDivisionError:
-        print("Divide by zero error")
+        #print("Divide by zero error")
         return None
         
     f = m * x1
@@ -222,7 +216,7 @@ def getLine(x1, y1, x2, y2):
     if x_dif < 0:
         x_dif = x_dif * -1
     
-    print("rise {}, run {}, m {}, f {}, b {}, x {},  y {}, y_dif {}, x_dif {}".format(rise, run, m, f, b, x, y, y_dif, x_dif))
+    #print("rise {}, run {}, m {}, f {}, b {}, x {},  y {}, y_dif {}, x_dif {}".format(rise, run, m, f, b, x, y, y_dif, x_dif))
     
     x2 = round(x2)
     y2 = round(y2)
@@ -258,8 +252,8 @@ def getLine(x1, y1, x2, y2):
     return line
       
 #Get screenshot of current window
-def getScreenshot(hwnd, hsv, window_num=0):
-    x, y, x2, y2 = getWindow(hwnd, window_num)
+def getScreenshot(hwnd_list, hsv, instance_num=0):
+    x, y, x2, y2 = getWindowPos(hwnd_list, instance_num)
     
     W = x2 - x - 5
     H = y2 - y - 5
@@ -273,7 +267,7 @@ def getScreenshot(hwnd, hsv, window_num=0):
     cropped_y = titlebar_pixels
     
     #get image data
-    wDC = win32gui.GetWindowDC(hwnd[window_num])
+    wDC = win32gui.GetWindowDC(hwnd_list[instance_num])
     dcObj = win32ui.CreateDCFromHandle(wDC)
     cDC = dcObj.CreateCompatibleDC()
     dataBitMap = win32ui.CreateBitmap()
@@ -290,7 +284,7 @@ def getScreenshot(hwnd, hsv, window_num=0):
     #Free Resources
     dcObj.DeleteDC()
     cDC.DeleteDC()
-    win32gui.ReleaseDC(hwnd[window_num], wDC)
+    win32gui.ReleaseDC(hwnd_list[instance_num], wDC)
     win32gui.DeleteObject(dataBitMap.GetHandle())
 
     #Drop alpha channel of photo
@@ -347,9 +341,9 @@ def shift_channel(c, amount):
 
 #Searches for image on screen
 #Parameters:
-    #WALDO: image file to search for on screen
-def find(target, hwnd, window_num=0, hsv=None):
-    img = getScreenshot(hwnd, hsv, window_num)
+    #target: image file to search for on screen
+def find(target, hwnd_list, instance_num=0, hsv=None):
+    img = getScreenshot(hwnd_list, hsv, instance_num)
 
     #cv.imshow("test" ,img)
     #cv.waitKey(0)
@@ -366,14 +360,14 @@ def printBestMatch(loc, conf):
     
 #Returns coordinates of center of target image where found on screen
 #TODO: Add small randomizations to clicks
-def getCenter(max_loc, FILE):
+def getCenter(loc, FILE):
     run_w = FILE.shape[1]
     run_h = FILE.shape[0]
     rw = run_w / 2
     rh = run_h / 2
     
-    w = max_loc[0] + rw
-    h = max_loc[1] + rh
+    x = loc[0] + rw
+    y = loc[1] + rh
     
-    return w, h
+    return x, y
 
