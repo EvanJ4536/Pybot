@@ -4,5 +4,6 @@ I did my best to remove everything that wasnt hsv related so its buggy but it wo
 
 to close the program properly CTRL+C when powershell/cmd is the active window
 
-**if you dont use Runelite then you will have to edit line 13.**
-Run main.py while Runescape is open.  
+**if you dont use Runelite then you will have to edit line 13.**  
+
+Download the folder and run main.py while Runescape is open.  
