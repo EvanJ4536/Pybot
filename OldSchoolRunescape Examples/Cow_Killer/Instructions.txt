@@ -1,0 +1,9 @@
+These scripts are sometimes hard to stop because they move your mouse and use your keyboard.
+A simple CTRL + C while Powershell or CMD is the active window will stop it.
+
+Run this script while in the Lumbridge cow pen, other places with lots of cows may work too.
+It will attempt to detect false positives and prevent clicking on the same spot over and over.
+Because of this it may get stuck in certain places for a while until its certain it has a match.
+
+it will fight cows until you stop it.
+It will NOT stop or run away if youre almost dead.
