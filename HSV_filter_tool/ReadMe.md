@@ -6,4 +6,8 @@ to close the program properly CTRL+C when powershell/cmd is the active window
 
 **if you dont use Runelite then you will have to edit line 13.**  
 
+&emsp;
+  
 Download the folder and run main.py while Runescape is open.  
+
+2 windows will open, one for viewing the hsv filter in real time over the target window, and one for HSV value editing.
