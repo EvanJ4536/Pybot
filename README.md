@@ -3,7 +3,9 @@ Useful functions for making bots scripts for simple games like runescape or flas
 Supports multiple instances at the same time and HSV filters for more refined image detection.  
 Supports windows only.  
 
-# Dependencies
+**Be mindful with the use of the functions that manipulate the mouse and active window in loops, a simple logic error could have the window stuck on the foreground**
+
+## Dependencies
 -pywin32    
 -numpy  
 -opencv-python  
@@ -12,8 +14,21 @@ Supports windows only.
 pip install pywin32 numpy opencv-python
 ```
 
-# Usage
-just import it into your script.
+## HSV Filter Format  
+
+```
+FORMAT:   
+0 - Hue min, 1 - Saturation min, 2 - Value min, 3 - Hue max, 4 - Sat max, 5 - Val max, 6 - Sat add, 7 - Sat sub, 8 - Val add, 9 - Val sub
+                      0   1  2   3   4    5   6  7  8  9
+hsv_filter_example = [9, 99, 0, 15, 255, 255, 0, 0, 0, 0]
+```
+
+## Usage
+### Pybot  
+Just import it into your script.  
+
+### HSV Filter Tool  
+Download the HSV_filter_tool folder and run main.py while Runescape is running.  
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 **getScreenshot(hwnd_list, hsv, instance_num=0):**  
@@ -39,6 +54,8 @@ min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
 &emsp;&emsp;-hwnd_list: List of window handles  
 &emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
 &emsp;&emsp;-hsv: List of HSV filter values  
+
+&emsp-Returns the confidence level and a list containing a point x, y where x and y are the coordinates of the best match found.
 
 Example:
 ```python
@@ -207,13 +224,4 @@ altered_img = applyHsvFilter(img, scorpion_hsv):
 &emsp;&emsp;-loc: Coordinates of match found on screen  
 &emsp;&emsp;-conf: Confidence of match found on screen  
 
-
------------------------------------------------------------------------------------------------------------------------------------------
-**HSV Filter Format**  
-```
-FORMAT:   
-0 - Hue min, 1 - Saturation min, 2 - Value min, 3 - Hue max, 4 - Sat max, 5 - Val max, 6 - Sat add, 7 - Sat sub, 8 - Val add, 9 - Val sub
-                      0   1  2   3   4    5   6  7  8  9
-hsv_filter_example = [9, 99, 0, 15, 255, 255, 0, 0, 0, 0]
-```
 
