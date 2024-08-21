@@ -82,7 +82,7 @@ for win in windows:
 ```
 
 -----------------------------------------------------------------------------------------------------------------------------------------
-**getHwnd(window_names):**  
+**getHwnd(instance_list):**  
 &emsp;&emsp;-window_names: Type: List. Cell name/names of target window. you may have to getWindows() to find correct name.  
 
 &emsp;-Returns a list of window handles.  
