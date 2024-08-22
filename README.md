@@ -1,6 +1,7 @@
 # Pybot
-Useful functions for making bots scripts for simple games like runescape or flash games, using OpenCV Template Matching.  
-Supports multiple instances at the same time and HSV filters for more refined image detection.  
+Useful functions for making bots scripts for simple games like runescape or flash games.  
+Uses OpenCV Template Matching and HSV filtering for more refined image detection.  
+Supports multiple instances at the same time.  
 Supports windows only.  
 
 **Be mindful with the use of the functions that manipulate the mouse and active window in loops, a simple logic error could have the window stuck on the foreground**
@@ -25,7 +26,13 @@ hsv_filter_example = [9, 99, 0, 15, 255, 255, 0, 0, 0, 0]
 
 ## Usage
 ### Pybot  
-Just import it into your script.  
+Just import it into your script.
+
+To use the find function you will want to use the windows snipping tool to take screenshots of what you want to find on screen and either put it  
+in the same folder as your script or supply the path when reading it.
+
+**Check the examples folder and the function usage below, the scripts are very easy to write**  
+
 
 ### HSV Filter Tool  
 Download the HSV_filter_tool folder and run main.py while Runescape is running.  
