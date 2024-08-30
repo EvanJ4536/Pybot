@@ -62,7 +62,7 @@ min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
 &emsp;&emsp;-instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
 &emsp;&emsp;-hsv: List of HSV filter values  
 
-&emsp-Returns the confidence level and a list containing a point x, y where x and y are the coordinates of the best match found.
+&emsp;-Returns the confidence level and a list containing a point x, y where x and y are the coordinates of the best match found.
 
 Example:
 ```python
