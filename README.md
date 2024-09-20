@@ -1,5 +1,5 @@
 # Pybot
-Useful functions for making bots scripts for simple games like runescape or flash games.  
+Useful functions for making bot scripts for simple games like runescape or flash games.  
 Uses OpenCV Template Matching and HSV filtering for more refined image detection.  
 Supports multiple instances at the same time.  
 Supports windows only.  
