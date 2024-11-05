@@ -130,7 +130,7 @@ topLeftX, topLeftY, bottomRightX, bottomRightY = pybot.getWindowPos(hwnd_list, i
 &emsp;&emsp;-s: speed, set to True for faster cursor movement  
 &emsp;&emsp;instance_num: Index number for hwnd_list.  Default is 0 for one instance.  
 
-&emsp-Gets all integer coordinates from the current cursor position to the destination and moves the mouse along the line. Applies an upward or downward slope.  
+&emsp;-Gets all integer coordinates from the current cursor position to the destination and moves the mouse along the line. Applies an upward or downward slope.  
 
 Example:
 ```python
